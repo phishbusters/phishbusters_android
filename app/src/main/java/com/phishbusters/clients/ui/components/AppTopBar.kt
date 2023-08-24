@@ -1,12 +1,9 @@
 package com.phishbusters.clients.ui.components
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,20 +52,20 @@ fun AppTopBar(
                 )
             }
         },
-        actions = {
-            IconButton(onClick = {
-                Toast.makeText(
-                    context,
-                    "Search is not yet implemented in this configuration",
-                    Toast.LENGTH_LONG
-                ).show()
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Test" // stringResource(R.string.cd_search)
-                )
-            }
-        },
+//        actions = {
+//            IconButton(onClick = {
+//                Toast.makeText(
+//                    context,
+//                    "Search is not yet implemented in this configuration",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }) {
+//                Icon(
+//                    imageVector = Icons.Filled.Search,
+//                    contentDescription = "Test" // stringResource(R.string.cd_search)
+//                )
+//            }
+//        },
         scrollBehavior = scrollBehavior,
         modifier = modifier
     )

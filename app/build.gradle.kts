@@ -19,7 +19,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "API_URL", "\"${project.property("API_URL")}\"")
+        buildConfigField("String", "API_URL", "\"https://phishbusters-api.herokuapp.com\"")
     }
 
     buildTypes {
@@ -66,7 +66,8 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:1.4.3")
     implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
     implementation("androidx.compose.runtime:runtime-rxjava2:1.4.3")
-
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     val navVersion = "2.5.3"
 
