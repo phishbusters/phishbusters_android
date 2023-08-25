@@ -1,4 +1,4 @@
-package com.phishbusters.clients.data.notifications
+package com.phishbusters.clients.services.notifications
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -33,7 +33,7 @@ class NotificationServiceImpl(private val context: Context) : NotificationServic
         }
     }
 
-    override fun showPhishingAlert(trustLevel: String) {
+    override fun showPhishingAlert(confidence: Double) {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }

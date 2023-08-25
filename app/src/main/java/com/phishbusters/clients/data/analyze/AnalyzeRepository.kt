@@ -8,4 +8,6 @@ interface AnalyzeRepository {
         messages: List<String>,
         profile: String?, profileName: String
     )
+
+    fun cleanMessages()
 }

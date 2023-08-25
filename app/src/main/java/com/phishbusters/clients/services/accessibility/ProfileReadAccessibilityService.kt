@@ -1,4 +1,4 @@
-package com.phishbusters.clients.services
+package com.phishbusters.clients.services.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent

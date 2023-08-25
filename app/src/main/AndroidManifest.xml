@@ -28,7 +28,7 @@
         </activity>
 
         <service
-            android:name=".services.ChatAccessibilityService"
+            android:name=".services.accessibility.ChatAccessibilityService"
             android:label="@string/chat_service_name"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
@@ -42,7 +42,7 @@
         </service>
 
         <service
-            android:name=".services.ProfileReadAccessibilityService"
+            android:name=".services.accessibility.ProfileReadAccessibilityService"
             android:label="@string/profile_service_name"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

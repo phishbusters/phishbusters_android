@@ -6,19 +6,49 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import com.google.gson.Gson
+import com.phishbusters.clients.data.ConfigVars
+import com.phishbusters.clients.data.TokenStore
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 enum class HttpMethod {
     GET, POST, PUT, PATCH, DELETE
 }
 
 
-class ApiService {
-    val client = OkHttpClient()
+class ApiService(val tokenStore: TokenStore) {
+    var client: OkHttpClient
     val gson = Gson()
     val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+
+    init {
+        if (ConfigVars.DEV_ENV == "DEV") {
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun getAcceptedIssuers(): Array<X509Certificate?> = arrayOfNulls(0)
+                override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) =
+                    Unit
+
+                override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) =
+                    Unit
+            })
+
+            val sslContext = SSLContext.getInstance("TLS")
+            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+            val allTrustingSocketFactory = sslContext.socketFactory
+
+            client = OkHttpClient.Builder()
+                .sslSocketFactory(allTrustingSocketFactory, trustAllCerts[0] as X509TrustManager)
+                .hostnameVerifier { _, _ -> true }
+                .build()
+        } else {
+            client = OkHttpClient()
+        }
+    }
 
     inline fun <reified T> httpCallWithPayload(
         url: String,
@@ -54,6 +84,10 @@ class ApiService {
             }
         }
 
+        tokenStore.getToken()?.let { token ->
+            builder.addHeader("Authorization", "Bearer $token")
+        }
+
         val request = builder.build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -62,9 +96,13 @@ class ApiService {
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    val body = response.body?.string()
-                    val result: T = gson.fromJson(body, T::class.java)
-                    onResponse(ApiResult.Success(result))
+                    if (response.isSuccessful) {
+                        val body = response.body?.string()
+                        val result: T = gson.fromJson(body, T::class.java)
+                        onResponse(ApiResult.Success(result))
+                    } else {
+                        print("Error en el back: ${response.code} body: ${response.body?.string()}")
+                    }
                 } catch (e: Exception) {
                     onResponse(ApiResult.Error(e))
                 }

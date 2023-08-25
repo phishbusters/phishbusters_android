@@ -19,7 +19,8 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "API_URL", "\"https://phishbusters-api.herokuapp.com\"")
+        buildConfigField("String", "API_URL", "\"https://ec2-15-229-100-214.sa-east-1.compute.amazonaws.com:3000\"")
+        buildConfigField("String", "ENV", "\"DEV\"")
     }
 
     buildTypes {

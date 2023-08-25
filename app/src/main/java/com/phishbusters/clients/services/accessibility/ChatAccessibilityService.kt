@@ -1,4 +1,4 @@
-package com.phishbusters.clients.services
+package com.phishbusters.clients.services.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.util.Log
@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class ChatAccessibilityService : AccessibilityService() {
     private val analyzeRepository: AnalyzeRepository
         get() = (application as PhishbustersApp).container.analyzeRepository
+    private var currentWindowId: Int? = null
 
     companion object {
         val IGNORE_WORDS = listOf("You", "Tu")
@@ -20,9 +21,20 @@ class ChatAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event?.packageName == "com.twitter.android") {
+            if (event.windowId != currentWindowId) {
+                currentWindowId = event.windowId
+                analyzeRepository.cleanMessages()
+            }
+
+            if (rootInActiveWindow == null) {
+                return
+            }
+
             val profile = findProfile(rootInActiveWindow)
             val rawMessages = findMessages(rootInActiveWindow)
+            var profileName = ""
             val messages = rawMessages.map {
+                profileName = if (it.contains(":")) it.substringBefore(":") else profileName
                 it.substringAfter(": ")
                     .replace(Regex("\\s\\d{2}/\\d{2}/\\d{2},\\s\\d{1,2}:\\d{2}\\s[APM]{2}."), "")
                     .trim()
@@ -31,7 +43,7 @@ class ChatAccessibilityService : AccessibilityService() {
             println("Messages: $messages")
 
             CoroutineScope(Dispatchers.IO).launch {
-                analyzeRepository.processMessages(messages, profile, "")
+                analyzeRepository.processMessages(messages, profile, profileName)
             }
         }
     }

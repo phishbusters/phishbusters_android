@@ -1,8 +1,9 @@
 package com.phishbusters.clients.data.analyze
 
 import com.phishbusters.clients.data.ConfigVars
-import com.phishbusters.clients.data.notifications.NotificationService
+import com.phishbusters.clients.services.notifications.NotificationService
 import com.phishbusters.clients.model.AnalyzedMessage
+import com.phishbusters.clients.model.Prediction
 import com.phishbusters.clients.network.ApiResult
 import com.phishbusters.clients.network.ApiService
 import com.phishbusters.clients.network.HttpMethod
@@ -21,11 +22,11 @@ class AnalyzeRepositoryImpl(
         print("Receiving messages to process: $messages")
         val newMessages = messages.filterNot { processedMessages.contains(it) }
         if (newMessages.isNotEmpty()) {
-            val endpoint = ConfigVars.API_URL + "/analyze"
-            processedMessages.addAll(newMessages)
-            val messagesString = processedMessages.joinToString(separator = " ")
+            val endpoint = ConfigVars.API_URL + "/chat/analyze"
+            processedMessages.addAll(newMessages.reversed())
+            val messages = processedMessages.toArray()
             val payload = mapOf(
-                "messages" to messagesString,
+                "messages" to messages,
                 "profile" to profile,
                 "username" to profileName
             )
@@ -37,17 +38,22 @@ class AnalyzeRepositoryImpl(
             ) { result ->
                 when (result) {
                     is ApiResult.Success -> {
-                        val response = result.data as AnalyzedMessage
-                        if (response.prediction) {
-                            notificationService.showPhishingAlert(response.trustLevel)
+                        val response = result.data
+                        if (response.prediction == Prediction.PHISHING.stringValue) {
+                            notificationService.showPhishingAlert(response.confidence)
                         }
                     }
 
                     is ApiResult.Error -> {
-                        // Maneja el error aquí si es necesario
+                        // Ignore for now
+                        print(result.exception?.message)
                     }
                 }
             }
         }
+    }
+
+    override fun cleanMessages() {
+        processedMessages.clear()
     }
 }
