@@ -1,6 +1,10 @@
 package com.phishbusters.clients
 
 import android.app.Application
+import android.os.Build.VERSION.SDK_INT
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.phishbusters.clients.data.AppContainer
 import com.phishbusters.clients.data.AppContainerImpl
 

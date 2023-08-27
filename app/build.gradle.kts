@@ -68,7 +68,9 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
     implementation("androidx.compose.runtime:runtime-rxjava2:1.4.3")
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.4.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.github.commandiron:ComposeLoading:1.0.4")
 
     val navVersion = "2.5.3"
 
@@ -87,6 +89,11 @@ dependencies {
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$navVersion")
     androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
     implementation("androidx.navigation:navigation-compose:$navVersion")
+
+    // jetpack compose-charts
+    implementation("com.patrykandpatrick.vico:core:1.9.2")
+    implementation("com.patrykandpatrick.vico:compose:1.9.2")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.9.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

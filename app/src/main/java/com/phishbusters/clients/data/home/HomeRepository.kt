@@ -1,9 +1,7 @@
 package com.phishbusters.clients.data.home
 
-import com.phishbusters.clients.network.ApiResult
+import com.phishbusters.clients.ui.home.PhishingStatsSummary
 
 interface HomeRepository {
-    fun registerReceiver()
-
-    fun unregisterReceiver()
+    suspend fun getPhishingStatistics(): Map<String, PhishingStatsSummary>
 }

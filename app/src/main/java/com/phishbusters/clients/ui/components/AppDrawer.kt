@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.phishbusters.clients.ui.navigation.NavDestinations
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDrawer(
     currentRoute: String,
@@ -24,9 +23,6 @@ fun AppDrawer(
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(modifier) {
-//        JetNewsLogo(
-//            modifier = Modifier.padding(horizontal = 28.dp, vertical = 24.dp)
-//        )
         NavigationDrawerItem(
             label = { Text(NavDestinations.Main.displayText) },
             icon = { Icon(Icons.Filled.Home, null) },

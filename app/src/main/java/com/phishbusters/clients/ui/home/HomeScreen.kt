@@ -2,6 +2,8 @@ package com.phishbusters.clients.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -35,10 +38,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.phishbusters.clients.model.ClientStatistics
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
+import com.phishbusters.clients.ui.components.AppLineChart
+import com.phishbusters.clients.ui.components.AppLoadingIndicator
 import com.phishbusters.clients.ui.components.AppSnackBarHost
 import com.phishbusters.clients.ui.components.AppTopBar
-import com.phishbusters.clients.ui.components.BarChart
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,8 +56,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
-
     Scaffold(
         snackbarHost = { AppSnackBarHost(hostState = snackBarHostState) },
         topBar = {
@@ -65,21 +68,49 @@ fun HomeScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        val contentModifier = Modifier
-            .padding(innerPadding)
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-        Column(
-            modifier = contentModifier
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(innerPadding)
         ) {
-            ServiceStatus(
-                services = uiState.accessibilityServiceStatus,
-                navigateToSettings = navigateToSettings
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            uiState.statistics?.let { PhishingStats(it) }
-            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.scrollable(rememberScrollState(), orientation = Orientation.Vertical)
+            ) {
+                ServiceStatus(
+                    services = uiState.accessibilityServiceStatus,
+                    navigateToSettings = navigateToSettings
+                )
+                if (uiState.isLoading) {
+                    AppLoadingIndicator()
+                } else {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    uiState.statistics?.let {
+                        val phishingChatsMap = it.entries.mapIndexed { index, entry ->
+                            index.toFloat() to entry.value.phishingChatsDetected.toFloat()
+                        }.toMap()
+                        val fakeProfilesMap = it.entries.mapIndexed { index, entry ->
+                            index.toFloat() to entry.value.fakeProfilesDetected.toFloat()
+                        }.toMap()
+                        val sortedDates = it.keys.sorted()
+                        val dateAxisValueFormatter =
+                            AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ ->
+                                sortedDates.getOrNull(x.toInt()) ?: ""
+                            }
+
+                        ChartSection(
+                            title = "Intentos de phishing detectados por chat en los últimos 7 días",
+                            data = phishingChatsMap,
+                            valueFormatter = dateAxisValueFormatter
+                        )
+
+                        ChartSection(
+                            title = "Bloqueos de perfiles realizados por el sistema en en los últimos 7 días",
+                            data = fakeProfilesMap,
+                            valueFormatter = dateAxisValueFormatter
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -154,17 +185,31 @@ private fun ServiceStatus(services: AccessibilityServiceStatus, navigateToSettin
 }
 
 @Composable
-private fun PhishingStats(
-    statistics: ClientStatistics
+private fun ChartSection(
+    title: String,
+    data: Map<Float, Float>,
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom>
 ) {
-    val values = listOf(
-        statistics.phishingAttempts.toFloat(),
-        statistics.successfulBlocks.toFloat()
-    )
-
-    BarChart(
-        values = values,
-        legends = listOf("Phishing Attempts", "Successful Blocks"),
-        maxHeight = 200.dp
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        AppLineChart(
+            data = data,
+            xValueFormatter = valueFormatter
+        )
+        Text(
+            text = "Fecha de actualización: ${java.util.Calendar.getInstance().time}",
+            fontSize = 10.sp,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
 }

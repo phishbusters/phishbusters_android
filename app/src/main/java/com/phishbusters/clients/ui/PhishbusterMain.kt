@@ -50,10 +50,6 @@ fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSize
             gesturesEnabled = !isExpandedScreen
         ) {
             Row {
-//                if (isExpandedScreen) {
-//                    AppNavRail
-//                }
-
                 AppNavigationGraph(
                     appContainer = appContainer,
                     isExpandedScreen = isExpandedScreen,

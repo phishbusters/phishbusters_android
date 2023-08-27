@@ -8,19 +8,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.phishbusters.clients.data.home.HomeRepository
-import com.phishbusters.clients.model.ClientStatistics
 import com.phishbusters.clients.services.broadcast.BroadcastService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 enum class ServiceStatus {
     CONNECTED,
     DISCONNECTED,
     PARTIAL
 }
+
+data class PhishingStatsSummary(
+    val phishingChatsDetected: Int,
+    val fakeProfilesDetected: Int
+)
 
 data class AccessibilityServiceStatus(
     val chatService: ServiceStatus,
@@ -43,13 +48,13 @@ data class AccessibilityServiceStatus(
 sealed interface HomeUiState {
     val isLoading: Boolean
     val errorMessage: String
-    val statistics: ClientStatistics?
+    val statistics: Map<String, PhishingStatsSummary>?
     val accessibilityServiceStatus: AccessibilityServiceStatus
 
     data class Default(
         override val isLoading: Boolean,
         override val errorMessage: String,
-        override val statistics: ClientStatistics? = null,
+        override val statistics: Map<String, PhishingStatsSummary>? = null,
         override val accessibilityServiceStatus: AccessibilityServiceStatus = AccessibilityServiceStatus(
             ServiceStatus.DISCONNECTED,
             ServiceStatus.DISCONNECTED
@@ -61,7 +66,7 @@ sealed interface HomeUiState {
 private data class HomeViewModelState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
-    val statistics: ClientStatistics? = null,
+    val statistics: Map<String, PhishingStatsSummary>? = null,
     val accessibilityServiceStatus: AccessibilityServiceStatus = AccessibilityServiceStatus(
         ServiceStatus.DISCONNECTED,
         ServiceStatus.DISCONNECTED
@@ -84,7 +89,7 @@ class HomeViewModel(
     private val accessibilityReceiver: BroadcastReceiver
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
-            isLoading = true,
+            isLoading = false,
         )
     )
 
@@ -122,10 +127,17 @@ class HomeViewModel(
 
     private fun getUsersStatistics() {
         viewModelState.update {
-            it.copy(
-                isLoading = false,
-                statistics = ClientStatistics(15, 33, "")
-            )
+            it.copy(isLoading = true)
+        }
+
+        viewModelScope.launch {
+            val stats = homeRepository.getPhishingStatistics()
+            viewModelState.update {
+                it.copy(
+                    isLoading = false,
+                    statistics = stats
+                )
+            }
         }
     }
 
