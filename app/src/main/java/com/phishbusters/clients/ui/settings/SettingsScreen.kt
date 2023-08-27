@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.phishbusters.clients.R
+import com.phishbusters.clients.ui.components.AppTopBar
 import com.phishbusters.clients.ui.navigation.NavDestinations
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,46 +42,11 @@ fun SettingsScreen(
     openDrawer: () -> Unit,
     snackBarHostState: SnackbarHostState
 ) {
-    val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = NavDestinations.Settings.displayText,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                navigationIcon = {
-                    if (!isExpandedScreen) {
-                        IconButton(onClick = openDrawer) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "open/close",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            Toast.makeText(
-                                context,
-                                "Search is not yet implemented in this configuration",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Tests"
-                        )
-                    }
-                }
-            )
+            AppTopBar(openDrawer = openDrawer)
         }
     ) { innerPadding ->
         val screenModifier = Modifier.padding(innerPadding)

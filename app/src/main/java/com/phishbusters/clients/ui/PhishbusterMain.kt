@@ -3,7 +3,6 @@ package com.phishbusters.clients.ui
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -21,7 +20,6 @@ import com.phishbusters.clients.ui.navigation.actions.NavigationActions
 import com.phishbusters.clients.ui.theme.PhishbustersTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSizeClass) {
     PhishbustersTheme {
@@ -44,7 +42,7 @@ fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSize
                 AppDrawer(
                     currentRoute = currentRoute,
                     navigateToHome = navigationActions.navigateToHome,
-                    navigateToInterests = navigationActions.navigateToSettings,
+                    navigateToSettings = navigationActions.navigateToSettings,
                     closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } }
                 )
             },

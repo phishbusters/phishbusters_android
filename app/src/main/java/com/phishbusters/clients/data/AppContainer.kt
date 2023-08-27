@@ -12,13 +12,18 @@ import com.phishbusters.clients.services.notifications.NotificationServiceImpl
 import com.phishbusters.clients.data.settings.SettingsRepository
 import com.phishbusters.clients.data.settings.SettingsRepositoryImpl
 import com.phishbusters.clients.network.ApiService
+import com.phishbusters.clients.services.broadcast.BroadcastService
+import com.phishbusters.clients.services.broadcast.BroadcastServiceImpl
 
 interface AppContainer {
     val homeRepository: HomeRepository
     val settingsRepository: SettingsRepository
     val analyzeRepository: AnalyzeRepository
-    val notificationService: NotificationService
     val authRepository: AuthRepository
+
+
+    val notificationService: NotificationService
+    val broadcastService: BroadcastService
 }
 
 class AppContainerImpl(private val applicationContext: Context) : AppContainer {
@@ -37,11 +42,15 @@ class AppContainerImpl(private val applicationContext: Context) : AppContainer {
         AnalyzeRepositoryImpl(apiService, this.notificationService)
     }
 
+    override val authRepository: AuthRepository by lazy {
+        AuthRepositoryImpl(apiService, tokenStore)
+    }
+
     override val notificationService: NotificationService by lazy {
         NotificationServiceImpl(applicationContext)
     }
 
-    override val authRepository: AuthRepository by lazy {
-        AuthRepositoryImpl(tokenStore)
+    override val broadcastService: BroadcastService by lazy {
+        BroadcastServiceImpl(applicationContext)
     }
 }

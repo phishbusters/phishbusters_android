@@ -5,9 +5,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.phishbusters.clients.ui.navigation.NavDestinations
 
 @Composable
 fun HomeRoute(
+    navController: NavController,
     homeViewModel: HomeViewModel,
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
@@ -19,6 +22,7 @@ fun HomeRoute(
         uiState = uiState,
         isExpandedScreen = isExpandedScreen,
         openDrawer = openDrawer,
+        navigateToSettings = { navController.navigate(NavDestinations.Settings.route) },
         snackBarHostState = snackBarHostState,
     )
 }
@@ -28,6 +32,7 @@ fun HomeRoute(
     uiState: HomeUiState,
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
+    navigateToSettings: () -> Unit,
     snackBarHostState: SnackbarHostState
 ) {
     val homeListLazyListState = rememberLazyListState()
@@ -43,6 +48,7 @@ fun HomeRoute(
 //    val homeScreenType = getHomeScreenType(isExpandedScreen, uiState)
 
     HomeScreen(
+        navigateToSettings = navigateToSettings,
         uiState = uiState,
         showTopAppBar = !isExpandedScreen,
         openDrawer = openDrawer,

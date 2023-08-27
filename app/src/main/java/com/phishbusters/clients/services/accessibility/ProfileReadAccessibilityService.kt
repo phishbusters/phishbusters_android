@@ -1,6 +1,7 @@
 package com.phishbusters.clients.services.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 
@@ -75,10 +76,18 @@ class ProfileReadAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {
         println("Profile service stopped.")
+        val intent = Intent("com.phishbusters.clients.ACCESSIBILITY_STATUS_CHANGED")
+        intent.putExtra("service_name", "ProfileAccessibilityService")
+        intent.putExtra("status", "DISCONNECTED")
+        sendBroadcast(intent)
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
         println("Profile service started.")
+        val intent = Intent("com.phishbusters.clients.ACCESSIBILITY_STATUS_CHANGED")
+        intent.putExtra("service_name", "ProfileAccessibilityService")
+        intent.putExtra("status", "CONNECTED")
+        sendBroadcast(intent)
     }
 }

@@ -31,15 +31,13 @@ fun AppTopBar(
     scrollBehavior: TopAppBarScrollBehavior? =
         TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
 ) {
-    val context = LocalContext.current
     val title = stringResource(id = R.string.app_name)
     CenterAlignedTopAppBar(
         title = {
             Image(
-                painter = painterResource(R.drawable.ic_launcher_background),
+                painter = painterResource(R.drawable.phishbusters_icon),
                 contentDescription = title,
                 contentScale = ContentScale.Inside,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -47,25 +45,11 @@ fun AppTopBar(
             IconButton(onClick = openDrawer) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "content description", // stringResource(R.string.cd_open_navigation_drawer),
+                    contentDescription = "Menu",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
-//        actions = {
-//            IconButton(onClick = {
-//                Toast.makeText(
-//                    context,
-//                    "Search is not yet implemented in this configuration",
-//                    Toast.LENGTH_LONG
-//                ).show()
-//            }) {
-//                Icon(
-//                    imageVector = Icons.Filled.Search,
-//                    contentDescription = "Test" // stringResource(R.string.cd_search)
-//                )
-//            }
-//        },
         scrollBehavior = scrollBehavior,
         modifier = modifier
     )

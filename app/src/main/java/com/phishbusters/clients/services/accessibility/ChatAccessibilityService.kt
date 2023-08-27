@@ -1,6 +1,7 @@
 package com.phishbusters.clients.services.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -94,10 +95,18 @@ class ChatAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {
         Log.d("ChatAccessibilityService", "Servicio de accesibilidad detenido.")
+        val intent = Intent("com.phishbusters.clients.ACCESSIBILITY_DISCONNECTED")
+        intent.putExtra("service_name", "ChatAccessibilityService")
+        intent.putExtra("status", "DISCONNECTED")
+        sendBroadcast(intent)
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.d("ChatAccessibilityService", "Servicio de accesibilidad corriendo.")
+        val intent = Intent("com.phishbusters.clients.ACCESSIBILITY_CONNECTED")
+        intent.putExtra("service_name", "ChatAccessibilityService")
+        intent.putExtra("status", "CONNECTED")
+        sendBroadcast(intent)
     }
 }

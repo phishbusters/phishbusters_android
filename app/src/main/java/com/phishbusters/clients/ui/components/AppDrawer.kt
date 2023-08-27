@@ -19,7 +19,7 @@ import com.phishbusters.clients.ui.navigation.NavDestinations
 fun AppDrawer(
     currentRoute: String,
     navigateToHome: () -> Unit,
-    navigateToInterests: () -> Unit,
+    navigateToSettings: () -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,7 +38,7 @@ fun AppDrawer(
             label = { Text(NavDestinations.Settings.displayText) },
             icon = { Icon(Icons.Filled.Settings, null) },
             selected = currentRoute == NavDestinations.Settings.route,
-            onClick = { navigateToInterests(); closeDrawer() },
+            onClick = { navigateToSettings(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
     }

@@ -19,7 +19,6 @@ class AnalyzeRepositoryImpl(
         profile: String?,
         profileName: String
     ) {
-        print("Receiving messages to process: $messages")
         val newMessages = messages.filterNot { processedMessages.contains(it) }
         if (newMessages.isNotEmpty()) {
             val endpoint = ConfigVars.API_URL + "/chat/analyze"

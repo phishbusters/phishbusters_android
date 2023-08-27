@@ -31,10 +31,12 @@ fun AppNavigationGraph(
             val homeViewModel: HomeViewModel = viewModel(
                 factory = HomeViewModel.provideFactory(
                     homeRepository = appContainer.homeRepository,
+                    broadcastService = appContainer.broadcastService
                 )
             )
 
             HomeRoute(
+                navController = navController,
                 homeViewModel = homeViewModel,
                 isExpandedScreen = isExpandedScreen,
                 openDrawer = openDrawer,
