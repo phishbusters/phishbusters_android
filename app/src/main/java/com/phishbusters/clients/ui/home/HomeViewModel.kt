@@ -89,7 +89,7 @@ class HomeViewModel(
     private val accessibilityReceiver: BroadcastReceiver
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
-            isLoading = false,
+            isLoading = true,
         )
     )
 

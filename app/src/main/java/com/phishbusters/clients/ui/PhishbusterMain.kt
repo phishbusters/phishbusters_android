@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.phishbusters.clients.data.AppContainer
@@ -18,6 +19,7 @@ import com.phishbusters.clients.ui.navigation.AppNavigationGraph
 import com.phishbusters.clients.ui.navigation.NavDestinations
 import com.phishbusters.clients.ui.navigation.actions.NavigationActions
 import com.phishbusters.clients.ui.theme.PhishbustersTheme
+import com.phishbusters.clients.util.SharedPreferencesHelper
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,7 +38,7 @@ fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSize
 
         val isExpandedScreen = widthSizeClass == WindowWidthSizeClass.Expanded
         val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
-
+        val sharedPreferencesHelper = SharedPreferencesHelper(LocalContext.current)
         ModalNavigationDrawer(
             drawerContent = {
                 AppDrawer(
@@ -55,6 +57,12 @@ fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSize
                     isExpandedScreen = isExpandedScreen,
                     navController = navController,
                     openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
+                    startDestination = if (sharedPreferencesHelper.isTutorialCompleted()) {
+                        NavDestinations.Main.route
+                    } else {
+                        NavDestinations.Stepper.route
+                    },
+                    sharedPreferencesHelper = sharedPreferencesHelper
                 )
             }
         }

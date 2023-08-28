@@ -12,6 +12,9 @@ import com.phishbusters.clients.ui.home.HomeRoute
 import com.phishbusters.clients.ui.home.HomeViewModel
 import com.phishbusters.clients.ui.settings.SettingsRoute
 import com.phishbusters.clients.ui.settings.SettingsViewModel
+import com.phishbusters.clients.ui.tutorial.TutorialRoute
+import com.phishbusters.clients.ui.tutorial.TutorialViewModel
+import com.phishbusters.clients.util.SharedPreferencesHelper
 
 @Composable
 fun AppNavigationGraph(
@@ -21,6 +24,7 @@ fun AppNavigationGraph(
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
     startDestination: String = NavDestinations.Main.route,
+    sharedPreferencesHelper: SharedPreferencesHelper
 ) {
     NavHost(
         navController = navController,
@@ -52,6 +56,20 @@ fun AppNavigationGraph(
                 settingsViewModel = settingsViewModel,
                 isExpandedScreen = isExpandedScreen,
                 openDrawer = openDrawer
+            )
+        }
+
+        composable(route = NavDestinations.Stepper.route) { navBackStackEntry ->
+            val tutorialViewModel: TutorialViewModel = viewModel(
+                factory = TutorialViewModel.provideFactory()
+            )
+
+            TutorialRoute(
+                tutorialViewModel = tutorialViewModel,
+                onTutorialCompleted = {
+                    sharedPreferencesHelper.setTutorialCompleted()
+                    navController.navigate(NavDestinations.Main.route)
+                }
             )
         }
     }

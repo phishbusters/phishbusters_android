@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -68,47 +69,44 @@ fun HomeScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
-            Column(
-                modifier = Modifier.scrollable(rememberScrollState(), orientation = Orientation.Vertical)
-            ) {
-                ServiceStatus(
-                    services = uiState.accessibilityServiceStatus,
-                    navigateToSettings = navigateToSettings
-                )
-                if (uiState.isLoading) {
-                    AppLoadingIndicator()
-                } else {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    uiState.statistics?.let {
-                        val phishingChatsMap = it.entries.mapIndexed { index, entry ->
-                            index.toFloat() to entry.value.phishingChatsDetected.toFloat()
-                        }.toMap()
-                        val fakeProfilesMap = it.entries.mapIndexed { index, entry ->
-                            index.toFloat() to entry.value.fakeProfilesDetected.toFloat()
-                        }.toMap()
-                        val sortedDates = it.keys.sorted()
-                        val dateAxisValueFormatter =
-                            AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ ->
-                                sortedDates.getOrNull(x.toInt()) ?: ""
-                            }
+            ServiceStatus(
+                services = uiState.accessibilityServiceStatus,
+                navigateToSettings = navigateToSettings
+            )
+            if (uiState.isLoading) {
+                AppLoadingIndicator()
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+                uiState.statistics?.let {
+                    val phishingChatsMap = it.entries.mapIndexed { index, entry ->
+                        index.toFloat() to entry.value.phishingChatsDetected.toFloat()
+                    }.toMap()
+                    val fakeProfilesMap = it.entries.mapIndexed { index, entry ->
+                        index.toFloat() to entry.value.fakeProfilesDetected.toFloat()
+                    }.toMap()
+                    val sortedDates = it.keys.sorted()
+                    val dateAxisValueFormatter =
+                        AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ ->
+                            sortedDates.getOrNull(x.toInt()) ?: ""
+                        }
 
-                        ChartSection(
-                            title = "Intentos de phishing detectados por chat en los últimos 7 días",
-                            data = phishingChatsMap,
-                            valueFormatter = dateAxisValueFormatter
-                        )
+                    ChartSection(
+                        title = "Intentos de phishing detectados por chat en los últimos 7 días",
+                        data = phishingChatsMap,
+                        valueFormatter = dateAxisValueFormatter
+                    )
 
-                        ChartSection(
-                            title = "Bloqueos de perfiles realizados por el sistema en en los últimos 7 días",
-                            data = fakeProfilesMap,
-                            valueFormatter = dateAxisValueFormatter
-                        )
-                    }
+                    ChartSection(
+                        title = "Bloqueos de perfiles realizados por el sistema en en los últimos 7 días",
+                        data = fakeProfilesMap,
+                        valueFormatter = dateAxisValueFormatter
+                    )
                 }
             }
         }
