@@ -43,7 +43,7 @@ fun TutorialScreen(
         ), TutorialStep(
             step = 2,
             imageRes = R.drawable.tutorial2,
-            text = "Phisbusters utiliza IA para realizar analisis de texto y de patrones de comportamiento. De esta forma evitarmeos en tiempo real las amenzasas en las redes sociales",
+            text = "Phisbusters utiliza IA para realizar analisis de texto y de patrones de comportamiento. De esta forma mitigar en tiempo real las amenazas en las redes sociales",
             title = "Inteligencia artificial a tu servicio",
         ), TutorialStep(
             step = 3,

@@ -5,9 +5,11 @@ import android.content.Intent
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,8 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.phishbusters.clients.R
 import com.phishbusters.clients.ui.components.AppTopBar
 import com.phishbusters.clients.ui.navigation.NavDestinations
@@ -64,8 +71,6 @@ private fun settingsContent(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-
-
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -75,51 +80,59 @@ private fun settingsContent(
         item {
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = { openAccessibilitySettings(context) }) {
-                Text("Activar Servicios")
+                Text("Activar Servicios de Accesibilidad")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Column(horizontalAlignment = Alignment.Start) {
                 Text(
-                    text = "Para activar los servicios, sigue estos pasos:",
+                    text = "Para habilitar los servicios de accesibilidad, siga los siguientes pasos:",
                     textAlign = TextAlign.Left,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                listOf(
-                    "Busca 'Phishbusters' en la lista.",
-                    "Activa los servicios.",
-                    "Confirma la activación."
-                ).forEach { instruction ->
-                    Text(text = instruction, textAlign = TextAlign.Left)
-                }
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = ParagraphStyle(lineHeight = 20.sp)) {
+                            append("1. Navegue hasta 'Configuración de Accesibilidad' en su dispositivo.\n")
+                            append("2. Busque 'Phishbusters' en la lista de servicios disponibles.\n")
+                            append("3. Habilite los siguientes servicios y confirme su activación:\n")
+                            append("    - Servicio de Detección en Chats\n")
+                            append("    - Servicio de Identificación de Perfiles")
+                        }
+                    },
+                    textAlign = TextAlign.Left,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            serviceDescription(
+            ServiceDescription(
                 title = "Servicio de análisis de chats:",
-                description = "Analiza los chats en tiempo real para detectar posibles ataques de phishing."
+                description = "Este servicio escanea sus conversaciones en tiempo real para identificar y prevenir posibles intentos de phishing."
             )
             Spacer(modifier = Modifier.height(8.dp))
-            serviceDescription(
-                title = "Servicio de análisis de perfiles:",
-                description = "Examina los perfiles de los usuarios para identificar comportamientos sospechosos."
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Image(
-                painter = painterResource(id = R.drawable.placeholder),
-                contentDescription = "Descripción del GIF para accesibilidad",
+            ServiceDescription(
+                title = "Servicio de detección de perfiles:",
+                description = "Este servicio examina los perfiles de usuario en diversas plataformas para detectar comportamientos sospechosos y potencialmente maliciosos."
             )
         }
     }
 }
 
 @Composable
-private fun serviceDescription(title: String, description: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = title, style = MaterialTheme.typography.headlineSmall)
+private fun ServiceDescription(title: String, description: String) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Left,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(8.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Left,
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .fillMaxWidth()
         )
     }
 }
