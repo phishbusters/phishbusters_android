@@ -80,7 +80,9 @@ fun HomeScreen(
                 navigateToSettings = navigateToSettings
             )
             if (uiState.isLoading) {
-                AppLoadingIndicator()
+                Box(modifier = Modifier.padding(top = 12.dp)) {
+                    AppLoadingIndicator()
+                }
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 uiState.statistics?.let {

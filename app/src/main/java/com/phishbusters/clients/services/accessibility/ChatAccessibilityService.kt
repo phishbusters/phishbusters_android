@@ -40,8 +40,8 @@ class ChatAccessibilityService : AccessibilityService() {
                     .replace(Regex("\\s\\d{2}/\\d{2}/\\d{2},\\s\\d{1,2}:\\d{2}\\s[APM]{2}."), "")
                     .trim()
             }
-            println("Profile: $profile")
-            println("Messages: $messages")
+//            println("Profile: $profile")
+//            println("Messages: $messages")
 
             CoroutineScope(Dispatchers.IO).launch {
                 analyzeRepository.processMessages(messages, profile, profileName)

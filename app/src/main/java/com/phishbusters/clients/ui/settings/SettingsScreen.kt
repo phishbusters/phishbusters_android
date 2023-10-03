@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
@@ -87,6 +88,7 @@ private fun settingsContent(
                 Text(
                     text = "Para habilitar los servicios de accesibilidad, siga los siguientes pasos:",
                     textAlign = TextAlign.Left,
+                    color = Color.DarkGray,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -100,7 +102,8 @@ private fun settingsContent(
                         }
                     },
                     textAlign = TextAlign.Left,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.DarkGray,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +127,8 @@ private fun ServiceDescription(title: String, description: String) {
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Left,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp),
+            color = Color.Black,
         )
         Text(
             text = description,
@@ -132,7 +136,8 @@ private fun ServiceDescription(title: String, description: String) {
             textAlign = TextAlign.Left,
             modifier = Modifier
                 .padding(vertical = 4.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            color = Color.DarkGray,
         )
     }
 }

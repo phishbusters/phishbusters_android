@@ -9,5 +9,7 @@ interface AnalyzeRepository {
         profile: String?, profileName: String
     )
 
+    suspend fun processProfile(screenName: String)
+
     fun cleanMessages()
 }

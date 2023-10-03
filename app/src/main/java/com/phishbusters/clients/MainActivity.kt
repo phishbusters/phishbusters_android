@@ -2,6 +2,7 @@ package com.phishbusters.clients
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -23,12 +24,12 @@ class MainActivity : ComponentActivity() {
         // Solicitar el permiso para publicar notificaciones si es necesario
         if (ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.POST_NOTIFICATIONS,
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 REQUEST_CODE_NOTIFICATION
             )
         }

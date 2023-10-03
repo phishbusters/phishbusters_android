@@ -13,6 +13,7 @@ import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
 import java.lang.reflect.Type
+import java.net.SocketTimeoutException
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -94,7 +95,16 @@ class ApiService(val tokenStore: TokenStore) {
         val request = builder.build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                onResponse(ApiResult.Error(e))
+                val errorResult = when (e) {
+                    is SocketTimeoutException -> ApiResult.Error(
+                        e,
+                        "Tiempo de espera agotado, verifica tu conexión"
+                    )
+
+                    else -> ApiResult.Error(e, "Error de red")
+                }
+
+                onResponse(errorResult)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -119,47 +129,62 @@ class ApiService(val tokenStore: TokenStore) {
         type: Type = T::class.java,
         jsonBody: String? = null,
     ): ApiResult<T> = suspendCancellableCoroutine { continuation ->
-        val builder = Request.Builder().url(url)
-        jsonBody?.let {
-            val body = it.toRequestBody(jsonMediaType)
-            when (method) {
-                HttpMethod.POST -> builder.post(body)
-                HttpMethod.PUT -> builder.put(body)
-                HttpMethod.PATCH -> builder.patch(body)
-                HttpMethod.DELETE -> builder.delete(body)
-                HttpMethod.GET -> builder.get()
-            }
-        } ?: run {
-            when (method) {
-                HttpMethod.GET -> builder.get()
-                HttpMethod.DELETE -> builder.delete()
-                else -> throw IllegalArgumentException("Body must not be null for $method")
-            }
-        }
-
-        tokenStore.getToken()?.let { token ->
-            builder.addHeader("Authorization", "Bearer $token")
-        }
-
-        val request = builder.build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                continuation.resumeWith(Result.failure(e))
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                try {
-                    if (response.isSuccessful) {
-                        val body = response.body?.string()
-                        val result: T = gson.fromJson(body, type)
-                        continuation.resumeWith(Result.success(ApiResult.Success(result)))
-                    } else {
-                        continuation.resumeWith(Result.failure(Exception("Error en el back: ${response.code} body: ${response.body?.string()}")))
-                    }
-                } catch (e: Exception) {
-                    continuation.resumeWith(Result.failure(e))
+        try {
+            val builder = Request.Builder().url(url)
+            jsonBody?.let {
+                val body = it.toRequestBody(jsonMediaType)
+                when (method) {
+                    HttpMethod.POST -> builder.post(body)
+                    HttpMethod.PUT -> builder.put(body)
+                    HttpMethod.PATCH -> builder.patch(body)
+                    HttpMethod.DELETE -> builder.delete(body)
+                    HttpMethod.GET -> builder.get()
+                }
+            } ?: run {
+                when (method) {
+                    HttpMethod.GET -> builder.get()
+                    HttpMethod.DELETE -> builder.delete()
+                    else -> throw IllegalArgumentException("Body must not be null for $method")
                 }
             }
-        })
+
+            tokenStore.getToken()?.let { token ->
+                builder.addHeader("Authorization", "Bearer $token")
+            }
+
+            val request = builder.build()
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWith(Result.success(ApiResult.Error(e)))
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    try {
+                        if (response.isSuccessful) {
+                            val body = response.body?.string()
+                            val result: T = gson.fromJson(body, type)
+                            continuation.resumeWith(Result.success(ApiResult.Success(result)))
+                        } else {
+                            continuation.resumeWith(Result.success(ApiResult.Error(Exception("Error en el back: ${response.code} body: ${response.body?.string()}"))))
+                        }
+                    } catch (e: Exception) {
+                        continuation.resumeWith(Result.success(ApiResult.Error(e)))
+                    }
+                }
+            })
+        } catch (e: SocketTimeoutException) {
+            continuation.resumeWith(
+                Result.success(
+                    ApiResult.Error(
+                        e,
+                        "Tiempo de espera agotado, verifica tu conexión"
+                    )
+                )
+            )
+        } catch (e: IOException) {
+            continuation.resumeWith(Result.success(ApiResult.Error(e, "Error de red")))
+        } catch (e: Exception) {
+            continuation.resumeWith(Result.success(ApiResult.Error(e, "Error desconocido")))
+        }
     }
 }

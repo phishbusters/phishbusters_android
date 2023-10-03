@@ -3,7 +3,9 @@ package com.phishbusters.clients.data.analyze
 import com.phishbusters.clients.data.ConfigVars
 import com.phishbusters.clients.services.notifications.NotificationService
 import com.phishbusters.clients.model.AnalyzedMessage
+import com.phishbusters.clients.model.AnalyzedProfile
 import com.phishbusters.clients.model.Prediction
+import com.phishbusters.clients.model.ProfilePrediction
 import com.phishbusters.clients.network.ApiResult
 import com.phishbusters.clients.network.ApiService
 import com.phishbusters.clients.network.HttpMethod
@@ -47,6 +49,35 @@ class AnalyzeRepositoryImpl(
                         // Ignore for now
                         print(result.exception?.message)
                     }
+                }
+            }
+        }
+    }
+
+    override suspend fun processProfile(screenName: String) {
+        var finalScreenName = screenName
+        if (finalScreenName.startsWith("@")) {
+            finalScreenName = finalScreenName.substring(1)
+        }
+
+        val endpoint = ConfigVars.API_URL + "/profile/analyze"
+        val payload = mapOf("screenName" to finalScreenName)
+        apiService.httpCallWithPayload<AnalyzedProfile>(
+            endpoint,
+            HttpMethod.POST,
+            payload
+        ) { result ->
+            when (result) {
+                is ApiResult.Success -> {
+                    val response = result.data
+                    if (response.predictionLabel == ProfilePrediction.FAKE.stringValue) {
+                        notificationService.showProfileAlert(screenName, response.confidence)
+                    }
+                }
+
+                is ApiResult.Error -> {
+                    // Ignore for now
+                    print(result.exception?.message)
                 }
             }
         }

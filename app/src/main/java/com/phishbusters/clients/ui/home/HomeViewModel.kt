@@ -133,10 +133,22 @@ class HomeViewModel(
         viewModelScope.launch {
             val stats = homeRepository.getPhishingStatistics()
             viewModelState.update {
-                it.copy(
-                    isLoading = false,
-                    statistics = stats
-                )
+                when (stats) {
+                    is com.phishbusters.clients.network.ApiResult.Success -> {
+                        it.copy(
+                            isLoading = false,
+                            statistics = stats.data,
+                            errorMessage = ""
+                        )
+                    }
+
+                    is com.phishbusters.clients.network.ApiResult.Error -> {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = stats.error ?: stats.exception?.message ?: "Error"
+                        )
+                    }
+                }
             }
         }
     }

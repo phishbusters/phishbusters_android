@@ -3,10 +3,12 @@ package com.phishbusters.clients.ui.components
 import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
@@ -45,9 +47,12 @@ fun AppLoadingIndicator(
             )
         }
     } else {
-        Circle(
-            Modifier.fillMaxSize()
-        )
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Circle(
+                Modifier.size(50.dp).align(Alignment.Center)
+            )
+        }
     }
-
 }
