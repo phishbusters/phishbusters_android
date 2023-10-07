@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.phishbusters.clients.data.home.HomeRepository
+import com.phishbusters.clients.model.TotalStats
 import com.phishbusters.clients.services.broadcast.BroadcastService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -49,12 +50,14 @@ sealed interface HomeUiState {
     val isLoading: Boolean
     val errorMessage: String
     val statistics: Map<String, PhishingStatsSummary>?
+    val totalStats: TotalStats?
     val accessibilityServiceStatus: AccessibilityServiceStatus
 
     data class Default(
         override val isLoading: Boolean,
         override val errorMessage: String,
         override val statistics: Map<String, PhishingStatsSummary>? = null,
+        override val totalStats: TotalStats? = null,
         override val accessibilityServiceStatus: AccessibilityServiceStatus = AccessibilityServiceStatus(
             ServiceStatus.DISCONNECTED,
             ServiceStatus.DISCONNECTED
@@ -67,6 +70,7 @@ private data class HomeViewModelState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
     val statistics: Map<String, PhishingStatsSummary>? = null,
+    val totalStats: TotalStats? = null,
     val accessibilityServiceStatus: AccessibilityServiceStatus = AccessibilityServiceStatus(
         ServiceStatus.DISCONNECTED,
         ServiceStatus.DISCONNECTED
@@ -77,6 +81,7 @@ private data class HomeViewModelState(
             isLoading = isLoading,
             errorMessage = errorMessage,
             statistics = statistics,
+            totalStats = totalStats,
             accessibilityServiceStatus = accessibilityServiceStatus
         )
 
@@ -137,7 +142,8 @@ class HomeViewModel(
                     is com.phishbusters.clients.network.ApiResult.Success -> {
                         it.copy(
                             isLoading = false,
-                            statistics = stats.data,
+                            statistics = stats.data.lastSevenDays,
+                            totalStats = stats.data.sinceCreation,
                             errorMessage = ""
                         )
                     }
@@ -145,7 +151,9 @@ class HomeViewModel(
                     is com.phishbusters.clients.network.ApiResult.Error -> {
                         it.copy(
                             isLoading = false,
-                            errorMessage = stats.error ?: stats.exception?.message ?: "Error"
+                            errorMessage = stats.error ?: stats.exception?.message ?: "Error",
+                            statistics = null,
+                            totalStats = null
                         )
                     }
                 }

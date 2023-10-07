@@ -48,7 +48,7 @@ fun AppLineChart(
         Chart(
             chart = lineChart(),
             model = chartEntryModel,
-            startAxis = rememberStartAxis(),
+            startAxis = rememberStartAxis(valueFormatter = yValueFormatter),
             bottomAxis = rememberBottomAxis(valueFormatter = xValueFormatter),
             modifier = modifier,
             isZoomEnabled = false,

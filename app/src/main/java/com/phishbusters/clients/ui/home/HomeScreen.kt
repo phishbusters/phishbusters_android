@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,7 @@ import com.phishbusters.clients.ui.components.AppLineChart
 import com.phishbusters.clients.ui.components.AppLoadingIndicator
 import com.phishbusters.clients.ui.components.AppSnackBarHost
 import com.phishbusters.clients.ui.components.AppTopBar
+import com.phishbusters.clients.ui.components.DashboardIndicatorBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +100,31 @@ fun HomeScreen(
                             sortedDates.getOrNull(x.toInt()) ?: ""
                         }
 
+                    uiState.totalStats.let {
+                        Text(
+                            text = "Totales detectados",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp),
+                            color = Color.DarkGray
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            DashboardIndicatorBox(
+                                "Cuentas fraudulentas",
+                                it?.totalFakeProfiles.toString() ?: "0"
+                            )
+                            DashboardIndicatorBox(
+                                "Intentos de phishing",
+                                it?.totalPhishingChats.toString() ?: "0"
+                            )
+                        }
+                    }
+
                     ChartSection(
                         title = "Intentos de phishing detectados por chat en los últimos 7 días",
                         data = phishingChatsMap,
@@ -109,6 +136,31 @@ fun HomeScreen(
                         data = fakeProfilesMap,
                         valueFormatter = dateAxisValueFormatter
                     )
+                }
+                if (uiState.errorMessage.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(
+                                MaterialTheme.colorScheme.background,
+                                shape = RoundedCornerShape(8.dp),
+                            )
+                            .shadow(elevation = 2.dp, RoundedCornerShape(2.dp))
+                    ) {
+                        Box(modifier = Modifier.padding(8.dp)) {
+                            Text(
+                                text = uiState.errorMessage,
+                                modifier = Modifier.padding(top = 12.dp),
+                                color = Color.DarkGray,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -122,62 +174,74 @@ private fun ServiceStatus(services: AccessibilityServiceStatus, navigateToSettin
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable { navigateToSettings() }
             .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(8.dp))
             .shadow(elevation = 2.dp, RoundedCornerShape(2.dp))
     ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val textModifier = Modifier.padding(start = 8.dp)
-            val iconModifier = Modifier.size(36.dp)
-            val textStyle =
-                TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.DarkGray)
-            when (serviceStatus) {
-                ServiceStatus.CONNECTED -> {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Connected",
-                        modifier = iconModifier,
-                        tint = Color(0xFF006400),
-                    )
-                    Text(
-                        "Todos los servicios están activos. Su seguridad está garantizada.",
-                        modifier = textModifier,
-                        style = textStyle,
-                    )
-                }
+        Column() {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val textModifier = Modifier.padding(start = 8.dp)
+                val iconModifier = Modifier.size(36.dp)
+                val textStyle =
+                    TextStyle(fontSize = 18.sp, color = Color.DarkGray)
+                when (serviceStatus) {
+                    ServiceStatus.CONNECTED -> {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Connected",
+                            modifier = iconModifier,
+                            tint = Color(0xFF006400),
+                        )
+                        Text(
+                            "Todos los servicios están activos. Su seguridad está garantizada.",
+                            modifier = textModifier,
+                            style = textStyle,
+                        )
+                    }
 
-                ServiceStatus.PARTIAL -> {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Partial",
-                        modifier = iconModifier,
-                        tint = Color(0xFFDAA520),
-                    )
-                    Text(
-                        "Algunos servicios no están activos. Su protección podría no ser completa.",
-                        modifier = textModifier,
-                        style = textStyle,
-                    )
-                }
+                    ServiceStatus.PARTIAL -> {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Partial",
+                            modifier = iconModifier,
+                            tint = Color(0xFFDAA520),
+                        )
+                        Text(
+                            "Algunos servicios no están activos. Su protección podría no ser completa.",
+                            modifier = textModifier,
+                            style = textStyle,
+                        )
+                    }
 
-                ServiceStatus.DISCONNECTED -> {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Disconnected",
-                        modifier = iconModifier,
-                        tint = Color.Red,
-                    )
-                    Text(
-                        "Ningún servicio de seguridad está activo. Haga clic para activar y asegurar su dispositivo.",
-                        modifier = textModifier,
-                        style = textStyle,
-                    )
+                    ServiceStatus.DISCONNECTED -> {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Disconnected",
+                            modifier = iconModifier,
+                            tint = Color.Red,
+                        )
+                        Text(
+                            "Ningún servicio de seguridad está activo. Haga clic para activar y asegurar su dispositivo.",
+                            modifier = textModifier,
+                            style = textStyle,
+                        )
+                    }
+                }
+            }
+
+            if (serviceStatus == ServiceStatus.PARTIAL || serviceStatus == ServiceStatus.DISCONNECTED) {
+                Button(
+                    onClick = { navigateToSettings() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text("Proteger ahora")
                 }
             }
         }
@@ -200,7 +264,8 @@ private fun ChartSection(
             text = title,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
+            color = Color.DarkGray
         )
         AppLineChart(
             data = data,
@@ -209,7 +274,8 @@ private fun ChartSection(
         Text(
             text = "Fecha de actualización: ${java.util.Calendar.getInstance().time}",
             fontSize = 10.sp,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp),
+            color = Color.DarkGray
         )
     }
 }

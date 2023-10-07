@@ -3,12 +3,14 @@ package com.phishbusters.clients
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.Manifest
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
+import com.phishbusters.clients.services.feedback.FeedbackService
 import com.phishbusters.clients.ui.PhishbustersMain
 
 class MainActivity : ComponentActivity() {
@@ -33,6 +35,9 @@ class MainActivity : ComponentActivity() {
                 REQUEST_CODE_NOTIFICATION
             )
         }
+
+        val intent = Intent(applicationContext, FeedbackService::class.java)
+        applicationContext.startService(intent)
 
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass

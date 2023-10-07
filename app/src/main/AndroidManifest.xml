@@ -27,6 +27,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".services.feedback.FeedbackService" />
+
         <service
             android:name=".services.accessibility.ChatAccessibilityService"
             android:label="@string/chat_service_name"

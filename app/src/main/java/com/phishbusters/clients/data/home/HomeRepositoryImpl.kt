@@ -2,7 +2,9 @@ package com.phishbusters.clients.data.home
 
 import com.google.gson.reflect.TypeToken
 import com.phishbusters.clients.data.ConfigVars
+import com.phishbusters.clients.model.CombinedPhishingStats
 import com.phishbusters.clients.model.PhishingStatistics
+import com.phishbusters.clients.model.PhishingStatisticsResponse
 import com.phishbusters.clients.network.ApiResult
 import com.phishbusters.clients.network.ApiService
 import com.phishbusters.clients.network.HttpMethod
@@ -14,13 +16,13 @@ import java.text.SimpleDateFormat
 
 class HomeRepositoryImpl(private val apiService: ApiService) : HomeRepository {
 
-    override suspend fun getPhishingStatistics(): ApiResult<Map<String, PhishingStatsSummary>> =
+    override suspend fun getPhishingStatistics(): ApiResult<CombinedPhishingStats> =
         withContext(
             Dispatchers.IO
         ) {
             val apiEndpoint = ConfigVars.API_URL + "/phishing-stats"
-            val type = object : TypeToken<List<PhishingStatistics>>() {}.type
-            val apiResult = apiService.suspendHttpCall<List<PhishingStatistics>>(
+            val type = object : TypeToken<PhishingStatisticsResponse>() {}.type
+            val apiResult = apiService.suspendHttpCall<PhishingStatisticsResponse>(
                 url = apiEndpoint,
                 type = type,
                 method = HttpMethod.GET,
@@ -28,7 +30,9 @@ class HomeRepositoryImpl(private val apiService: ApiService) : HomeRepository {
 
             return@withContext when (apiResult) {
                 is ApiResult.Success -> {
-                    ApiResult.Success(processPhishingStatistics(apiResult.data))
+                    val lastSevenDays = processPhishingStatistics(apiResult.data.lastSevenDays)
+                    val sinceCreation = apiResult.data.sinceCreation
+                    ApiResult.Success(CombinedPhishingStats(lastSevenDays, sinceCreation))
                 }
 
                 is ApiResult.Error -> {

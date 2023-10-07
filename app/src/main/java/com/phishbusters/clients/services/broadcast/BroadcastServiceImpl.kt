@@ -8,8 +8,8 @@ import android.content.IntentFilter
 import android.view.accessibility.AccessibilityManager
 
 class BroadcastServiceImpl(private val context: Context) : BroadcastService {
-    override fun registerReceiver(accessibilityReceiver: BroadcastReceiver, filter: IntentFilter) {
-        context.registerReceiver(accessibilityReceiver, filter)
+    override fun registerReceiver(broadcastReceiver: BroadcastReceiver, filter: IntentFilter) {
+        context.registerReceiver(broadcastReceiver, filter)
     }
 
     override fun unregisterReceiver(accessibilityReceiver: BroadcastReceiver) {
