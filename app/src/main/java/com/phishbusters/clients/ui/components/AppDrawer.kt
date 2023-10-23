@@ -3,6 +3,7 @@ package com.phishbusters.clients.ui.components
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ fun AppDrawer(
     currentRoute: String,
     navigateToHome: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToTips: () -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -35,6 +37,13 @@ fun AppDrawer(
             icon = { Icon(Icons.Filled.Settings, null) },
             selected = currentRoute == NavDestinations.Settings.route,
             onClick = { navigateToSettings(); closeDrawer() },
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+        NavigationDrawerItem(
+            label = { Text(NavDestinations.Tips.displayText) },
+            icon = { Icon(Icons.Filled.Info, null) },
+            selected = currentRoute == NavDestinations.Tips.route,
+            onClick = { navigateToTips(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
     }

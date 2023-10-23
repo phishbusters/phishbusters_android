@@ -45,6 +45,7 @@ fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSize
                     currentRoute = currentRoute,
                     navigateToHome = navigationActions.navigateToHome,
                     navigateToSettings = navigationActions.navigateToSettings,
+                    navigateToTips = navigationActions.navigateToTips,
                     closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } }
                 )
             },

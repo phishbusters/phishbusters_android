@@ -22,4 +22,8 @@ public sealed class NavDestinations(
     object Stepper : NavDestinations(
         "Stepper", "stepper",
         { Icon(Icons.Filled.Info, contentDescription = null) })
+
+    object Tips : NavDestinations(
+        "Tips", "tips",
+        { Icon(Icons.Filled.Info, contentDescription = null) })
 }
