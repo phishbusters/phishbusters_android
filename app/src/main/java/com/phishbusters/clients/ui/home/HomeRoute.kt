@@ -14,6 +14,7 @@ fun HomeRoute(
     homeViewModel: HomeViewModel,
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
+    openNotification: () -> Unit,
     snackBarHostState: SnackbarHostState = SnackbarHostState()
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -24,6 +25,7 @@ fun HomeRoute(
         openDrawer = openDrawer,
         navigateToSettings = { navController.navigate(NavDestinations.Settings.route) },
         snackBarHostState = snackBarHostState,
+        openNotification = openNotification,
     )
 }
 
@@ -32,10 +34,11 @@ fun HomeRoute(
     uiState: HomeUiState,
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
+    openNotification: () -> Unit,
     navigateToSettings: () -> Unit,
     snackBarHostState: SnackbarHostState
 ) {
-    val homeListLazyListState = rememberLazyListState()
+//    val homeListLazyListState = rememberLazyListState()
 //    val articleDetailLazyListStates = when (uiState) {
 //        is HomeUiState.HasPosts -> uiState.postsFeed.allPosts
 //        is HomeUiState.NoPosts -> emptyList()
@@ -52,6 +55,7 @@ fun HomeRoute(
         uiState = uiState,
         showTopAppBar = !isExpandedScreen,
         openDrawer = openDrawer,
+        openNotification = openNotification,
         snackBarHostState = snackBarHostState,
     )
 }

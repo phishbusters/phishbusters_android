@@ -9,6 +9,7 @@ fun SettingsRoute(
     settingsViewModel: SettingsViewModel,
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
+    openNotification: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
 //    val tabContent = rememberTabContent(interestsViewModel)
@@ -19,6 +20,7 @@ fun SettingsRoute(
     SettingsScreen(
         isExpandedScreen = isExpandedScreen,
         openDrawer = openDrawer,
-        snackBarHostState = snackBarHostState
+        snackBarHostState = snackBarHostState,
+        openNotification = openNotification,
     )
 }

@@ -7,9 +7,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.phishbusters.clients.data.AppContainer
 import com.phishbusters.clients.ui.home.HomeRoute
 import com.phishbusters.clients.ui.home.HomeViewModel
+import com.phishbusters.clients.ui.notifications.NotificationsRoute
+import com.phishbusters.clients.ui.notifications.NotificationsViewModel
 import com.phishbusters.clients.ui.settings.SettingsRoute
 import com.phishbusters.clients.ui.settings.SettingsViewModel
 import com.phishbusters.clients.ui.tips.TipsRoute
@@ -25,6 +28,7 @@ fun AppNavigationGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
+    openNotification: () -> Unit = {},
     startDestination: String = NavDestinations.Main.route,
     sharedPreferencesHelper: SharedPreferencesHelper
 ) {
@@ -46,6 +50,7 @@ fun AppNavigationGraph(
                 homeViewModel = homeViewModel,
                 isExpandedScreen = isExpandedScreen,
                 openDrawer = openDrawer,
+                openNotification = openNotification,
             )
         }
 
@@ -57,7 +62,8 @@ fun AppNavigationGraph(
             SettingsRoute(
                 settingsViewModel = settingsViewModel,
                 isExpandedScreen = isExpandedScreen,
-                openDrawer = openDrawer
+                openDrawer = openDrawer,
+                openNotification = openNotification,
             )
         }
 
@@ -83,6 +89,20 @@ fun AppNavigationGraph(
             TipsRoute(
                 tipsViewModel = tipsViewModel,
                 openDrawer = openDrawer,
+                openNotification = openNotification,
+            )
+        }
+
+        composable(route = NavDestinations.Notifications.route,
+            deepLinks = listOf(navDeepLink { uriPattern = NavDestinations.Notifications.deepLink })
+        ) { navBackStackEntry ->
+            val notificationsViewModel: NotificationsViewModel = viewModel(
+                factory = NotificationsViewModel.provideFactory(appContainer.notificationRepository)
+            )
+
+            NotificationsRoute(
+                navController = navController,
+                notificationsViewModel = notificationsViewModel,
             )
         }
     }

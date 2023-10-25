@@ -34,13 +34,17 @@ import com.phishbusters.clients.ui.components.AppTopBar
 fun TipsScreen(
     tipsUiState: TipsUiState,
     openDrawer: () -> Unit,
+    openNotification: () -> Unit,
     snackBarHostState: SnackbarHostState,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
-            AppTopBar(openDrawer = openDrawer)
+            AppTopBar(
+                openDrawer = openDrawer,
+                openNotifications = openNotification,
+            )
         }
     ) { innerPadding ->
         LazyColumn(

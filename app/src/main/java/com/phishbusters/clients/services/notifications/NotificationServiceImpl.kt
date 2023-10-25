@@ -7,15 +7,24 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.phishbusters.clients.MainActivity
 import com.phishbusters.clients.R
+import com.phishbusters.clients.data.notification.NotificationRepository
+import com.phishbusters.clients.model.NotificationsType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.UUID
 
-class NotificationServiceImpl(private val context: Context) : NotificationService {
+class NotificationServiceImpl(
+    private val context: Context,
+    private val notificationRepository: NotificationRepository,
+) : NotificationService {
     init {
         createNotificationChannel()
     }
@@ -59,9 +68,8 @@ class NotificationServiceImpl(private val context: Context) : NotificationServic
     }
 
     override fun showPhishingAlert(confidence: Double) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val uri = Uri.parse("phishbusters://notifications")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -92,12 +100,15 @@ class NotificationServiceImpl(private val context: Context) : NotificationServic
             }
             notify(notificationId, builder.build())
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            notificationRepository.addNotification(NotificationsType.PhishingChat)
+        }
     }
 
     override fun showProfileAlert(screenName: String, confidence: Double) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val uri = Uri.parse("phishbusters://notifications")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -127,6 +138,10 @@ class NotificationServiceImpl(private val context: Context) : NotificationServic
                 return
             }
             notify(notificationId, builder.build())
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            notificationRepository.addNotification(NotificationsType.FakeProfile)
         }
     }
 }

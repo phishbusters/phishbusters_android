@@ -54,6 +54,7 @@ fun HomeScreen(
     uiState: HomeUiState,
     showTopAppBar: Boolean,
     openDrawer: () -> Unit,
+    openNotification: () -> Unit,
     navigateToSettings: () -> Unit,
     snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
@@ -65,6 +66,7 @@ fun HomeScreen(
             if (showTopAppBar) {
                 AppTopBar(
                     openDrawer = openDrawer,
+                    openNotifications = openNotification,
                     topAppBarState = topAppBarState
                 )
             }

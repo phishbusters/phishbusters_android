@@ -58,6 +58,7 @@ fun PhishbustersMain(appContainer: AppContainer, widthSizeClass: WindowWidthSize
                     isExpandedScreen = isExpandedScreen,
                     navController = navController,
                     openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
+                    openNotification = navigationActions.navigateToNotifications,
                     startDestination = if (sharedPreferencesHelper.isTutorialCompleted()) {
                         NavDestinations.Main.route
                     } else {

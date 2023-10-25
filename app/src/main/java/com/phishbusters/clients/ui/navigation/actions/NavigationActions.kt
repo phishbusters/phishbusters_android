@@ -15,4 +15,8 @@ class NavigationActions(navController: NavHostController) {
     val navigateToTips: () -> Unit = {
         navController.navigate(NavDestinations.Tips.route)
     }
+
+    val navigateToNotifications: () -> Unit = {
+        navController.navigate(NavDestinations.Notifications.route)
+    }
 }

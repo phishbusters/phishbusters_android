@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import com.phishbusters.clients.R
 @Composable
 fun AppTopBar(
     openDrawer: () -> Unit,
+    openNotifications: () -> Unit,
     modifier: Modifier = Modifier,
     topAppBarState: TopAppBarState = rememberTopAppBarState(),
     scrollBehavior: TopAppBarScrollBehavior? =
@@ -47,6 +49,15 @@ fun AppTopBar(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = "Menu",
                     tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = openNotifications) {
+                Image(
+                    imageVector = Icons.Filled.Notifications,
+                    contentDescription = "Notificaciones",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                 )
             }
         },

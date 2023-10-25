@@ -10,12 +10,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun TipsRoute(
     tipsViewModel: TipsViewModel,
     openDrawer: () -> Unit,
+    openNotification: () -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val uiState by tipsViewModel.uiState.collectAsStateWithLifecycle()
     TipsScreen(
         tipsUiState = uiState,
         openDrawer,
+        openNotification,
         snackBarHostState,
     )
 }
