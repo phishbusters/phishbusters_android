@@ -41,7 +41,7 @@ class AnalyzeRepositoryImpl(
                     is ApiResult.Success -> {
                         val response = result.data
                         if (response.prediction == Prediction.PHISHING.stringValue) {
-                            notificationService.showPhishingAlert(response.confidence)
+                            notificationService.showPhishingAlert(response.confidence, profile.orEmpty())
                         }
                     }
 

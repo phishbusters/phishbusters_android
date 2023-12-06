@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface NotificationRepository {
     val notificationsFlow: StateFlow<List<NotificationData>>
 
-    suspend fun addNotification(type: NotificationsType)
+    suspend fun addNotification(type: NotificationsType, profileName: String)
 
 
 }

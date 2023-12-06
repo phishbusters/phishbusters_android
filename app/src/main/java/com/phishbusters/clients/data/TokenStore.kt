@@ -13,6 +13,6 @@ class TokenStore(private val context: Context) {
 
     fun getToken(): String? {
         // TODO: When logging is finished remove second argument
-        return sharedPreferences.getString("jwt_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZwbWlyYWJpbGVAZ21haWwuY29tIiwiaWF0IjoxNjk2NTI4NjE2fQ.mbRms-DK3g1OxgqmW9iH6b5GtcDHeQgZ4S1AKHk9QRQ")
+        return sharedPreferences.getString("jwt_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNlZ3VyaWRhZEBwaGlzaGJ1c3RlcnMuY29tIiwiaWF0IjoxNjk4NTM2ODkyfQ.El_UdJTe55M0s4LQHpAtsVRoSjVKY7k_SsSRHqw7VL4")
     }
 }

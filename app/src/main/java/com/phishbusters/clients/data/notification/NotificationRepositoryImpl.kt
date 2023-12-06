@@ -20,18 +20,19 @@ class NotificationRepositoryImpl(private val context: Context) : NotificationRep
         _notificationsFlow.value = getNotificationFromPrefs()
     }
 
-    override suspend fun addNotification(type: NotificationsType) {
+    override suspend fun addNotification(type: NotificationsType, profile: String) {
+        val usableProfile = profile.ifEmpty { "Desconocido" }
         val (icon, title, message) = when (type) {
             NotificationsType.FakeProfile -> Triple(
                 R.drawable.fake_profile_icon,
                 context.getString(R.string.fake_profile_detected),
-                context.getString(R.string.fake_profile_detected_message)
+                String.format(context.getString(R.string.fake_profile_detected_message), usableProfile)
             )
 
             NotificationsType.PhishingChat -> Triple(
                 R.drawable.notification_icon,
                 context.getString(R.string.phishing_chat_detected),
-                context.getString(R.string.phishing_chat_detected_message)
+                String.format(context.getString(R.string.phishing_chat_detected_message), usableProfile)
             )
         }
 

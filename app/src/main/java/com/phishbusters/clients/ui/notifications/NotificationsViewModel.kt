@@ -75,16 +75,9 @@ class NotificationsViewModel(
                     }
                 }
             }
-
-//            addNotification()
         }
     }
 
-    private fun addNotification() {
-        viewModelScope.launch {
-            notificationRepository.addNotification(NotificationsType.FakeProfile)
-        }
-    }
     companion object {
         fun provideFactory(
             notificationRepository: NotificationRepository

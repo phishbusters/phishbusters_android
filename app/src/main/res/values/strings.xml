@@ -4,7 +4,7 @@
     <string name="profile_service_name">Servicio de identificación de perfiles</string>
     <string name="chat_service_name">Servicio de detección de chats</string>
     <string name="fake_profile_detected">Alerta de perfil falso</string>
-    <string name="fake_profile_detected_message">Creemos que el perfil $1 podria ser falso. En caso</string>
+    <string name="fake_profile_detected_message">Creemos que el perfil %1$s podria ser falso.</string>
     <string name="phishing_chat_detected">Alerta de phishing</string>
-    <string name="phishing_chat_detected_message">Creemos el mensaje recibido por:$1 podria ser un intento de phishing.</string>
+    <string name="phishing_chat_detected_message">Creemos el mensaje recibido por: %1$s podria ser un intento de phishing.</string>
 </resources>

@@ -67,7 +67,7 @@ class NotificationServiceImpl(
         builder.addAction(0, "Incorrecto 👎", thumbsDownPendingIntent)
     }
 
-    override fun showPhishingAlert(confidence: Double) {
+    override fun showPhishingAlert(confidence: Double, profile: String) {
         val uri = Uri.parse("phishbusters://notifications")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -102,7 +102,7 @@ class NotificationServiceImpl(
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            notificationRepository.addNotification(NotificationsType.PhishingChat)
+            notificationRepository.addNotification(NotificationsType.PhishingChat, profile)
         }
     }
 
@@ -141,7 +141,7 @@ class NotificationServiceImpl(
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            notificationRepository.addNotification(NotificationsType.FakeProfile)
+            notificationRepository.addNotification(NotificationsType.FakeProfile, screenName)
         }
     }
 }
